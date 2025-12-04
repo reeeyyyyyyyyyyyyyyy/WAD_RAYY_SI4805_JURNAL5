@@ -16,6 +16,8 @@ class Vinyl extends Model
      */
     protected $table = 'vinyls';
     protected $fillable = [
-
+        'title',
+        'artist',
+        'year'
     ];
 }

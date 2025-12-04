@@ -16,10 +16,10 @@ class VinylController extends Controller
     public function index()
     {
         // ambil semua data vinyl
-        // $vinyls = ....
+        $vinyls = Vinyl::all();
 
         // return koleksi vinyl
-        // return ....
+        return VinylResource::collection($vinyls);
     }
 
     /**
@@ -30,22 +30,27 @@ class VinylController extends Controller
     {
         // Request body berisi title, artist dan year
         $validator = Validator::make($request->all(), [
-            
+            'title' => 'required|string|max:255',
+            'artist'=> 'required|string|max:255',
+            'year' => 'required|integer|max:4' . date('Y')
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                // 'success' => false,
-                // 'errors' => ....
+                'success' => false,
+                'message' => 'Please check your request',
+                'errors' => $validator->errors()
             ], 422);
         }
 
         // Buat data vinyl
-        // $vinyl = ....
+        $vinyl = Vinyl::create($validator->validated());
 
         // return vinyl yang dibuat sebagai resource
-        // return ....
-
+        return (new VinylResource($vinyl))
+                    ->additional(['message' => 'New vinyl created successfully'])
+                    ->response()
+                    ->setStatusCode(201);
     }
 
     /**
@@ -55,17 +60,17 @@ class VinylController extends Controller
     public function show(string $id)
     {
         // Cari data vinyl berdasarkan ID
-        // $vinyl = ....
+        $vinyl = Vinyl::find($id);
 
         if (!$vinyl) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'Vinyl not found'
             ], 404);
         }
 
         // return vinyl sebagai resource
-        // return ....
+        return new VinylResource($vinyl);
     }
 
     /**
@@ -76,32 +81,38 @@ class VinylController extends Controller
     {
         // Request body berisi title, artist dan year
         $validator = Validator::make($request->all(), [
-            
+            'title' => 'required|string|max:255',
+            'artist'=> 'required|string|max:255',
+            'year' => 'required|integer|max:4' . date('Y')
         ]);
 
         // Cari data vinyl berdasarkan ID
-        // $vinyl = ....
+        $vinyl = Vinyl::find($id);
 
         if (!$vinyl) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => "Vinyl not found"
             ], 404);
         }
 
 
         if ($validator->fails()) {
             return response()->json([
-                // 'success' => false,
-                // 'errors' => ....
+                'success' => false,
+                'message' => 'Please check your update',
+                'errors' => $validator->errors()
             ], 422);
         }
 
         // Update data vinyl
-        // $vinyl->....
+        $vinyl-> update($validator->validated());
 
         // return vinyl yang diupdate sebagai resource
-        // return ....
+        return (new VinylResource($vinyl))
+                    ->additional(['message' => 'Vinyl updated successfully'])
+                    ->response()
+                    ->setStatusCode(200);
     }
 
     /**
@@ -111,19 +122,19 @@ class VinylController extends Controller
     public function destroy(string $id)
     {
         // Cari data vinyl berdasarkan ID
-        // $vinyl = ....
+        $vinyl = Vinyl::find($id);
 
         if (!$vinyl) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => "Vinyl not found"
             ], 404);
         }
 
         // Hapus data vinyl
-        // $vinyl->....
+        $vinyl->delete();
 
         // return message sukses
-        // return ....
+        return response()->json(['message' => 'Vinyl deleted successfully'], 200);
     }
 }
