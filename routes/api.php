@@ -15,6 +15,7 @@ use App\Http\Controllers\AuthController;
  * =============1================
  * unprotected routes for user registration and login
  */
+Route::apiResource('cassette', CassetteResource::class);
 
 
 
@@ -39,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
      * ============6================
      * cassette API routes
      */
+
 
     /**
      * ============7================

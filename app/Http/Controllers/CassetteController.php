@@ -16,10 +16,10 @@ class CassetteController extends Controller
     public function index()
     {
         // ambil semua data cassette
-        // $cassettes = ....
+        $cassettes = Cassette::all();
 
         // return koleksi cassette
-        // return ....
+        return CassetteResource::collection($cassettes);
     }
 
     /**
@@ -30,21 +30,26 @@ class CassetteController extends Controller
     {
         // Request body berisi title, artist dan year
         $validator = Validator::make($request->all(), [
-            
+            'title' => 'required|string|max:255',
+            'artist' => 'required|string|max:255',
+            'year' => 'required'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                // 'success' => false,
-                // 'errors' => ....
+                'success' => false,
+                'errors' => $validator->errors()
             ], 422);
         }
 
         // Buat data cassette
-        // $cassette = ....
+        $cassette = Cassette::create($validator->validated());
 
         // return cassette yang dibuat sebagai resource
-        // return ....
+        return (new CassetteResource ($cassette))
+                ->additional(['message' => 'Cassette created successfully'])
+                ->response()
+                ->destroysetStatusCode(201);
 
     }
 
@@ -55,17 +60,17 @@ class CassetteController extends Controller
     public function show(string $id)
     {
         // Cari data cassette berdasarkan ID
-        // $cassette = ....
+        $cassette = Cassette::find($id);
 
         if (!$cassette) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'Cassette not found'
             ], 404);
         }
 
         // return cassette sebagai resource
-        // return ....
+        return new CassetteResource($cassette);
     }
 
     /**
@@ -76,32 +81,37 @@ class CassetteController extends Controller
     {
         // Request body berisi title, artist dan year
         $validator = Validator::make($request->all(), [
-            
+            'title' => 'sometimes|required|string|max:255',
+            'artist' => 'sometimes|required|string|max:255',
+            'year' => 'sometimes|required'
         ]);
 
         // Cari data cassette berdasarkan ID
-        // $cassette = ....
+        $cassette = Cassette::find($id);
 
         if (!$cassette) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'Cassette not found'
             ], 404);
         }
 
 
         if ($validator->fails()) {
             return response()->json([
-                // 'success' => false,
-                // 'errors' => ....
+                'success' => false,
+                'errors' => $validator->errors()
             ], 422);
         }
 
         // Update data cassette
-        // $cassette->....
+        $cassette->update($validator->validated());
 
         // return cassette yang diupdate sebagai resource
-        // return ....
+        return (new CassetteResource($cassette))
+        ->additional(['message' => 'Cassette updated successfully'])
+        ->response()
+        ->destroysetStatusCode(200);
     }
 
     /**
@@ -111,19 +121,21 @@ class CassetteController extends Controller
     public function destroy(string $id)
     {
         // Cari data cassette berdasarkan ID
-        // $cassette = ....
+        $cassette = Cassette::find($id);
 
         if (!$cassette) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'Cassette not found'
             ], 404);
         }
 
         // Hapus data cassette
-        // $cassette->....
+        $cassette->delete();
 
         // return message sukses
-        // return ....
+        return response()->json
+        (['message' => 'Cassette deleted successfully'], 200);
+        
     }
 }
