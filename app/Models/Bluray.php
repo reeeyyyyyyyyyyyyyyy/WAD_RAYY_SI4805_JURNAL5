@@ -15,7 +15,9 @@ class Bluray extends Model
      */
     protected $table = 'blurays';
     protected $fillable = [
-
+        'title',
+        'director',
+        'year',
     ];
 
 }
