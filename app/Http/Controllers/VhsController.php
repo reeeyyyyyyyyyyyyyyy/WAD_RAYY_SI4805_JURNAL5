@@ -20,6 +20,8 @@ class VhsController extends Controller
 
         // return koleksi vhs
         // return ....
+        $vhss = Vhs::all();
+        return VhsResource::collection($vhss);
     }
 
     /**
@@ -30,21 +32,27 @@ class VhsController extends Controller
     {
         // Request body berisi title, director dan year
         $validator = Validator::make($request->all(), [
-            
+            'title' => 'required|string|max:255',
+            'director' => 'nullable|string',
+            'year' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                // 'success' => false,
-                // 'errors' => ....
+                'success' => false,
+                'errors' => 'Please check your request'
+            
             ], 422);
         }
 
         // Buat data vhs
-        // $vhs = ....
+        $vhs = Vhs::create($validator->validated());
 
         // return vhs yang dibuat sebagai resource
-        // return ....
+        return (new VhsResource($vhs))
+        ->additional(['message'=> 'Vhs created sucessfully!'])
+        ->response()
+        ->setStatusCode(201);
 
     }
 
@@ -55,17 +63,17 @@ class VhsController extends Controller
     public function show(string $id)
     {
         // Cari data vhs berdasarkan ID
-        // $vhs = ....
+        $vhs = Vhs::find($id);
 
         if (!$vhs) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'Vhs not found!'
             ], 404);
         }
 
         // return vhs sebagai resource
-        // return ....
+        return new VhsResource($vhs);
     }
 
     /**
@@ -76,32 +84,37 @@ class VhsController extends Controller
     {
         // Request body berisi title, director dan year
         $validator = Validator::make($request->all(), [
-            
+            'title' => 'required|string|max:255',
+            'director' => 'nullable|string',
+            'year' => 'required',
         ]);
 
         // Cari data vhs berdasarkan ID
-        // $vhs = ....
+        $vhs = Vhs::find($id);
 
         if (!$vhs) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'vhs not found!'
             ], 404);
         }
 
 
         if ($validator->fails()) {
             return response()->json([
-                // 'success' => false,
-                // 'errors' => ....
+                'success' => false,
+                'errors' => 'Please check your request!'
             ], 422);
         }
 
-        // Update data vhs
-        // $vhs->....
+        //Update data vhs
+        $vhs->update($validator->validated());
 
         // return vhs yang diupdate sebagai resource
-        // return ....
+        return (new VhsResource($vhs))
+        ->additional(['message'=> 'Vhs updated sucessfully!'])
+        ->response()
+        ->setStatusCode(200);
     }
 
     /**
@@ -111,19 +124,19 @@ class VhsController extends Controller
     public function destroy(string $id)
     {
         // Cari data vhs berdasarkan ID
-        // $vhs = ....
+        $vhs = Vhs::find($id);
 
         if (!$vhs) {
             return response()->json([
-                // 'success' => false,
-                // 'message' => ....
+                'success' => false,
+                'message' => 'Vhs not found!'
             ], 404);
         }
 
         // Hapus data vhs
-        // $vhs->....
+        $vhs->delete();
 
         // return message sukses
-        // return ....
+        return response()->json(['message' => 'Vhs deleted successfully!'],200);
     }
 }

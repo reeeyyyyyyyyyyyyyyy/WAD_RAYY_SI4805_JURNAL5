@@ -12,10 +12,14 @@ class Vhs extends Model
      * ============1================
      * Define the table name and its attributes/columns
      * the attributes are title, director, year
+     
      */
+
     protected $table = 'vhss';
     protected $fillable = [
-
+        'title',
+        'director',
+        'year',
     ];
 
 }
