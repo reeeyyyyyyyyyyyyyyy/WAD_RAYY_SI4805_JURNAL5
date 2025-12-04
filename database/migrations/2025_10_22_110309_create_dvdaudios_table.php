@@ -17,6 +17,12 @@ return new class extends Migration
          * id, title, artist, year, timestamps
          */
         Schema::create('dvdaudios', function (Blueprint $table) {
+            $table->id();
+            $table->string('title');
+            $table->string('artist');
+            $table->year('year');
+            $table->timestamps();
+
         });
     }
 
